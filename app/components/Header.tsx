@@ -38,7 +38,9 @@ export default function Header() {
               About
             </a>
             <a
-              href="#"
+              href="https://pump.fun/coin/4LQTq4LAmPVZ3Krk5Yd1Uck616kEq2RQeaXRVdGupump"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white text-sm font-bold px-5 py-2.5 rounded-full transition-colors"
             >
               <Rocket className="w-4 h-4" />
@@ -48,7 +50,9 @@ export default function Header() {
 
           {/* Mobile CTA */}
           <a
-            href="#"
+            href="https://pump.fun/coin/4LQTq4LAmPVZ3Krk5Yd1Uck616kEq2RQeaXRVdGupump"
+            target="_blank"
+            rel="noopener noreferrer"
             className="md:hidden flex items-center gap-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold px-4 py-2 rounded-full transition-colors"
           >
             <Rocket className="w-3.5 h-3.5" />
