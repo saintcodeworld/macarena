@@ -16,7 +16,16 @@ export const metadata: Metadata = {
   title: "$MMGA — Make Macarena Great Again Dashboard",
   description:
     "Make Macarena Great Again! The movement is back. Trending viral videos with the iconic MMGA soundtrack. $MMGA coin — the sound of the current era.",
-  icons: { icon: "/favicon.ico" },
+  icons: {
+  icon: [
+    { url: "/download (3).png", sizes: "32x32", type: "image/png" },
+    { url: "/download (3).png", sizes: "16x16", type: "image/png" },
+    { url: "/download (3).png", sizes: "192x192", type: "image/png" },
+  ],
+  apple: [
+    { url: "/download (3).png", sizes: "180x180", type: "image/png" },
+  ],
+},
 };
 
 export default function RootLayout({
