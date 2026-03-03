@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "$MACARENA — Viral Trending Videos Dashboard",
+  title: "$MMGA — Make Macarena Great Again Dashboard",
   description:
-    "The Macarena is back. Trending viral videos with the iconic Macarena soundtrack. $MACARENA coin — the sound of the current era.",
+    "Make Macarena Great Again! The movement is back. Trending viral videos with the iconic MMGA soundtrack. $MMGA coin — the sound of the current era.",
   icons: { icon: "/favicon.ico" },
 };
 

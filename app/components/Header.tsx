@@ -14,12 +14,19 @@ export default function Header() {
             </div>
             <div>
               <h1 className="text-lg font-black tracking-tight">
-                <span className="text-primary">$</span>MACARENA
+                <span className="text-primary">$</span>MMGA
               </h1>
               <p className="text-[10px] text-muted uppercase tracking-widest">
                 Viral Dashboard
               </p>
             </div>
+          </div>
+
+          {/* Contract Address */}
+          <div className="hidden lg:flex items-center">
+            <span className="text-xs text-muted font-mono bg-secondary/10 px-3 py-1.5 rounded-full border border-secondary/20">
+              4LQTq4LAmPVZ3Krk5Yd1Uck616kEq2RQeaXRVdGupump
+            </span>
           </div>
 
           {/* Nav */}
@@ -35,7 +42,7 @@ export default function Header() {
               className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white text-sm font-bold px-5 py-2.5 rounded-full transition-colors"
             >
               <Rocket className="w-4 h-4" />
-              Buy $MACARENA
+              Buy $MMGA
             </a>
           </nav>
 

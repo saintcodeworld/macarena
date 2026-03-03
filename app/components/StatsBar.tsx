@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { TrendingUp, Users, Play, Flame } from "lucide-react";
+import { TrendingUp, Play, Flame } from "lucide-react";
 
 export default function StatsBar() {
-  const [totalViews, setTotalViews] = useState(14200000); // 14.2M initial views
-  const [community, setCommunity] = useState(89400); // 89.4K initial community
+  const [totalViews, setTotalViews] = useState(115500000); // 115.5M initial views
 
   // Format number for display
   const formatNumber = (num: number) => {
@@ -22,12 +21,6 @@ export default function StatsBar() {
         const additionalViews = Math.floor(prev * growthRate);
         return prev + additionalViews;
       });
-      
-      setCommunity(prev => {
-        const growthRate = Math.random() * 0.002 + 0.0005; // 0.05% to 0.25% growth
-        const additionalMembers = Math.floor(prev * growthRate);
-        return prev + additionalMembers;
-      });
     }, Math.random() * 4000 + 1000); // Random interval between 1-5 seconds
 
     return () => clearInterval(growthInterval);
@@ -39,12 +32,6 @@ export default function StatsBar() {
       label: "Total Views",
       value: formatNumber(totalViews),
       change: "+" + Math.floor(Math.random() * 200 + 300) + "%",
-    },
-    {
-      icon: Users,
-      label: "Community",
-      value: formatNumber(community),
-      change: "+" + Math.floor(Math.random() * 100 + 100) + "%",
     },
     {
       icon: TrendingUp,
@@ -60,7 +47,7 @@ export default function StatsBar() {
     },
   ];
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {stats.map((stat) => (
         <div
           key={stat.label}

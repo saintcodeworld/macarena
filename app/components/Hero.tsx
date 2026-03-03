@@ -2,7 +2,7 @@
 
 import { TrendingUp, HelpCircle, X } from "lucide-react";
 import { useState, useRef } from "react";
-import MacarenaGame from "./MacarenaGame";
+import MMGAGame from "./MacarenaGame";
 
 export default function Hero() {
   const [showHowToPlay, setShowHowToPlay] = useState(false);
@@ -22,16 +22,13 @@ export default function Hero() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight mb-4">
-            <span className="text-foreground">The </span>
             <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
-              Macarena
+              Make Macarena Great Again
             </span>
-            <br />
-            <span className="text-foreground">Is Back</span>
           </h1>
 
           <p className="text-base sm:text-lg text-muted max-w-2xl mx-auto mb-8 leading-relaxed">
-            Play the Macarena Piano Tiles game and win 0.5 SOL! Tap the tiles as they fall, survive the full song, and claim your reward.
+            Play the MMGA Piano Tiles game and win 0.5 SOL! Tap the tiles as they fall, survive the full song, and claim your reward.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -145,7 +142,7 @@ export default function Hero() {
       )}
 
       {/* Game Component */}
-      <MacarenaGame ref={gameRef} />
+      <MMGAGame ref={gameRef} />
     </>
   );
 }

@@ -59,10 +59,10 @@ export default function VideoCard({ src, index }: VideoCardProps) {
     e.stopPropagation();
     
     const websiteUrl = window.location.origin;
-    const videoTitle = `Macarena x War Edit #${index}`;
-    const twitterText = `🔥 ${videoTitle}\n\nThe sound that defines the era — $MACARENA\n\nWatch more viral videos: ${websiteUrl}\n\n#Macarena #ViralVideo #Trending`;
+    const videoTitle = `MMGA x War Edit #${index}`;
+    const twitterText = `🔥 ${videoTitle}\n\nThe sound that defines the era — $MMGA\n\nWatch more viral videos: ${websiteUrl}\n\n#MMGA #ViralVideo #Trending`;
     
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}`;
+    const twitterUrl = `https://x.com/i/communities/2028970230739828864`;
     
     window.open(twitterUrl, '_blank', 'width=550,height=420');
   };
@@ -134,10 +134,10 @@ export default function VideoCard({ src, index }: VideoCardProps) {
       {/* Info Section */}
       <div className="p-4 space-y-3">
         <h3 className="text-sm font-bold text-foreground leading-tight">
-          Macarena x War Edit #{index} 🔥
+          MMGA x War Edit #{index} 🔥
         </h3>
         <p className="text-xs text-muted">
-          The sound that defines the era — $MACARENA
+          The sound that defines the era — $MMGA
         </p>
         <div className="flex items-center justify-between pt-1">
           <div className="flex items-center gap-3">

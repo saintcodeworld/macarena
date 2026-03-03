@@ -22,7 +22,7 @@ export default function Home() {
                 🔥 Viral Trending Videos
               </h2>
               <p className="text-sm text-muted mt-1">
-                The Macarena soundtrack over the current world events — pure internet gold
+                  Macarena soundtrack over the current world events — pure internet gold
               </p>
             </div>
             <span className="hidden sm:inline-flex items-center gap-1.5 bg-primary/10 text-primary text-xs font-bold px-3 py-1.5 rounded-full border border-primary/20">

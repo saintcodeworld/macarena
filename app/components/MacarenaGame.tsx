@@ -4,17 +4,19 @@ import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHand
 import { Music, Trophy, X, Zap, Heart } from "lucide-react";
 
 const NUM_LANES = 3;
+const BPM = 140;
+const BEAT_INTERVAL = 60000 / BPM; // ~428ms per beat
 
 interface Tile {
   id: number;
   lane: number;
   y: number;
+  beatTime: number;
 }
 
 // ---------- BEAT MAP ----------
-// Full Macarena instrumental (~224s, ~140 BPM = ~428ms per beat).
-// We generate a dense map across the whole song with increasing density.
-// The function returns [timeMs, lane] pairs.
+// Full Make Macarena Great Again instrumental (~224s, ~140 BPM = ~428ms per beat).
+// Enhanced beat map with better music synchronization and aggressive difficulty scaling
 function generateBeatMap(): [number, number][] {
   const beats: [number, number][] = [];
   let prevLane = -1;
@@ -30,48 +32,53 @@ function generateBeatMap(): [number, number][] {
     beats.push([t, lane]);
   };
 
-  // Phase 1: Intro (0-16s) — gentle warmup, every beat (~428ms)
-  for (let t = 2000; t < 16000; t += 428) addBeat(t);
+  // Phase 1: Intro (0-16s) — gentle warmup, every beat
+  for (let t = 2000; t < 16000; t += BEAT_INTERVAL) addBeat(t);
 
-  // Phase 2: Verse 1 (16-40s) — every beat, occasional half-beats
-  for (let t = 16000; t < 40000; t += 428) {
+  // Phase 2: Verse 1 (16-40s) — every beat + occasional off-beats
+  for (let t = 16000; t < 40000; t += BEAT_INTERVAL) {
     addBeat(t);
-    if (Math.sin(t * 0.005) > 0.6) addBeat(t + 214);
+    if (Math.sin(t * 0.005) > 0.6) addBeat(t + BEAT_INTERVAL / 2);
   }
 
-  // Phase 3: Chorus 1 (40-72s) — every beat + frequent half-beats
-  for (let t = 40000; t < 72000; t += 428) {
+  // Phase 3: Chorus 1 (40-72s) — every beat + frequent off-beats
+  for (let t = 40000; t < 72000; t += BEAT_INTERVAL) {
     addBeat(t);
-    if (Math.sin(t * 0.004) > 0.3) addBeat(t + 214);
+    if (Math.sin(t * 0.004) > 0.3) addBeat(t + BEAT_INTERVAL / 2);
   }
 
   // Phase 4: Verse 2 (72-104s) — dense, some triplets
-  for (let t = 72000; t < 104000; t += 428) {
+  for (let t = 72000; t < 104000; t += BEAT_INTERVAL) {
     addBeat(t);
-    addBeat(t + 214);
-    if (Math.sin(t * 0.003) > 0.5) addBeat(t + 142);
+    addBeat(t + BEAT_INTERVAL / 2);
+    if (Math.sin(t * 0.003) > 0.5) addBeat(t + BEAT_INTERVAL / 3);
   }
 
-  // Phase 5: Chorus 2 (104-140s) — very dense
-  for (let t = 104000; t < 140000; t += 320) {
+  // Phase 5: Chorus 2 (104-140s) — very dense with double beats
+  for (let t = 104000; t < 140000; t += BEAT_INTERVAL * 0.75) {
     addBeat(t);
-    if (Math.sin(t * 0.006) > 0.2) addBeat(t + 160);
+    if (Math.sin(t * 0.006) > 0.2) addBeat(t + BEAT_INTERVAL * 0.375);
   }
 
-  // Phase 6: Bridge (140-170s) — rapid fire
-  for (let t = 140000; t < 170000; t += 250) {
+  // Phase 6: Bridge (140-170s) — rapid fire with syncopation
+  for (let t = 140000; t < 170000; t += BEAT_INTERVAL * 0.6) {
     addBeat(t);
-    if (Math.sin(t * 0.007) > 0.4) addBeat(t + 125);
+    if (Math.sin(t * 0.007) > 0.4) addBeat(t + BEAT_INTERVAL * 0.3);
   }
 
-  // Phase 7: Final Chorus (170-210s) — insane density
-  for (let t = 170000; t < 210000; t += 214) {
+  // Phase 7: Final Chorus (170-210s) — insane density with bursts
+  for (let t = 170000; t < 210000; t += BEAT_INTERVAL * 0.5) {
     addBeat(t);
-    if (Math.sin(t * 0.008) > 0.3) addBeat(t + 107);
+    if (Math.sin(t * 0.008) > 0.3) addBeat(t + BEAT_INTERVAL * 0.25);
+    // Add occasional triple bursts
+    if (Math.random() > 0.7) {
+      addBeat(t + BEAT_INTERVAL * 0.125);
+      addBeat(t + BEAT_INTERVAL * 0.25);
+    }
   }
 
-  // Phase 8: Outro (210-222s) — cool down slightly
-  for (let t = 210000; t < 222000; t += 350) {
+  // Phase 8: Outro (210-222s) — cool down but still challenging
+  for (let t = 210000; t < 222000; t += BEAT_INTERVAL * 0.8) {
     addBeat(t);
   }
 
@@ -108,7 +115,7 @@ const LANE_GLOW = [
   "shadow-cyan-400/50",
 ];
 
-const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function MacarenaGame(_, ref) {
+const MMGAGameComponent = forwardRef<{ openGame: () => void }, {}>(function MMGAGame(_, ref) {
   const [isOpen, setIsOpen] = useState(false);
   const [gameState, setGameState] = useState<"idle" | "playing" | "won" | "lost">("idle");
   const [score, setScore] = useState(0);
@@ -117,6 +124,8 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
   const [lives, setLives] = useState(MAX_LIVES);
   const [speed, setSpeed] = useState(1);
   const [progress, setProgress] = useState(0);
+  const [beatPulse, setBeatPulse] = useState(false);
+  const [difficultyLevel, setDifficultyLevel] = useState(1);
   const [flashLane, setFlashLane] = useState<number | null>(null);
   const [tiles, setTiles] = useState<Tile[]>([]);
   const [hitFx, setHitFx] = useState<{ id: number; lane: number; type: string } | null>(null);
@@ -186,10 +195,22 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
 
       const elapsed = now - gameStartRef.current;
 
-      // Speed: ramps 1x → 2.5x over the song
-      const currentSpeed = 1 + (elapsed / SONG_DURATION) * 1.5;
+      // Speed: increases by 0.5x every 10 seconds
+      const elapsedSeconds = elapsed / 1000;
+      const currentSpeed = 1 + (Math.floor(elapsedSeconds / 10) * 0.5);
       setSpeed(currentSpeed);
       setProgress(Math.min(100, (elapsed / SONG_DURATION) * 100));
+      
+      // Update difficulty level based on speed
+      const newLevel = Math.floor((currentSpeed - 1) / 0.5) + 1;
+      setDifficultyLevel(newLevel);
+      
+      // Beat pulse effect for visual synchronization
+      const currentBeat = Math.floor(elapsed / BEAT_INTERVAL);
+      if (currentBeat !== Math.floor((elapsed - 16) / BEAT_INTERVAL)) {
+        setBeatPulse(true);
+        setTimeout(() => setBeatPulse(false), 100);
+      }
 
       // Spawn tiles
       const travelMs = 1600 / currentSpeed;
@@ -200,6 +221,7 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
             id: tileIdRef.current++,
             lane,
             y: -8,
+            beatTime,
           }];
           spawnedUpToRef.current++;
         } else {
@@ -332,9 +354,9 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
         className="fixed bottom-6 right-6 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white px-5 py-3 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center gap-2 font-bold text-sm z-50 group hover:scale-105"
       >
         <Music className="w-5 h-5 group-hover:animate-bounce" />
-        <span className="hidden sm:inline">Macarena Tiles</span>
+        <span className="hidden sm:inline">MMGA Tiles</span>
         <span className="bg-yellow-400 text-black px-2 py-0.5 rounded-full text-[10px] font-black">
-          WIN 0.5 SOL
+          WIN {speed >= 3.5 ? "1.0" : "0.5"} SOL
         </span>
       </button>
     );
@@ -347,9 +369,9 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
         <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-800 bg-black/50 shrink-0">
           <div className="flex items-center gap-2">
             <Music className="w-4 h-4 text-purple-400" />
-            <h2 className="text-base font-black text-white">Macarena Tiles</h2>
+            <h2 className="text-base font-black text-white">MMGA Tiles</h2>
             <span className="bg-yellow-400/20 text-yellow-400 px-1.5 py-0.5 rounded-full text-[9px] font-black border border-yellow-400/30">
-              0.5 SOL
+              {speed >= 3.5 ? "1.0" : "0.5"} SOL
             </span>
           </div>
           <button onClick={handleClose} className="text-gray-600 hover:text-white transition-colors">
@@ -364,7 +386,7 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
             <h3 className="text-xl font-black text-white mb-1">Piano Tiles Challenge</h3>
             <p className="text-gray-500 mb-5 text-xs max-w-[280px]">
               Tap the tiles as they reach the zone. Only 3 lives — miss 3 and you're out.
-              Survive the full Macarena to claim 0.5 SOL!
+              Survive the full MMGA to claim 0.5 SOL!
             </p>
             <div className="flex gap-2 mb-4">
               {["←", "↓", "→"].map((arrow, i) => (
@@ -395,7 +417,7 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
               <>
                 <Trophy className="w-16 h-16 text-yellow-400 mb-2 animate-bounce" />
                 <h3 className="text-2xl font-black text-yellow-400 mb-1">YOU WON!</h3>
-                <p className="text-white text-sm mb-4">You've earned <span className="text-yellow-400 font-black">0.5 SOL</span></p>
+                <p className="text-white text-sm mb-4">You've earned <span className="text-yellow-400 font-black">{speed >= 3.5 ? "1.0 SOL" : "0.5 SOL"}</span></p>
                 <div className="bg-gray-900/80 rounded-xl p-4 mb-5 w-full max-w-[260px] border border-gray-800 text-sm">
                   <div className="flex justify-between mb-1.5">
                     <span className="text-gray-500">Score</span>
@@ -424,9 +446,13 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
                 />
                 <button
                   onClick={handleWalletSubmit}
-                  className="w-full max-w-[260px] bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl font-black text-sm hover:scale-105 active:scale-95 transition-transform shadow-xl mb-2"
+                  className={`w-full max-w-[260px] px-6 py-3 rounded-xl font-black text-sm hover:scale-105 active:scale-95 transition-transform shadow-xl mb-2 ${
+                    speed >= 3.5 
+                      ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-black" 
+                      : "bg-gradient-to-r from-pink-500 to-purple-600 text-white"
+                  }`}
                 >
-                  CLAIM 0.5 SOL
+                  CLAIM {speed >= 3.5 ? "1.0 SOL" : "0.5 SOL"}
                 </button>
                 <button
                   onClick={startGame}
@@ -439,11 +465,18 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
               <>
                 <div className="text-5xl mb-3 animate-bounce">✨</div>
                 <h3 className="text-2xl font-black text-green-400 mb-2">REWARD SENT!</h3>
-                <p className="text-gray-400 text-xs mb-4">Your 0.5 SOL is on the way to:</p>
+                <p className="text-gray-400 text-xs mb-4">You've earned <span className="text-yellow-400 font-black">{speed >= 3.5 ? "1.0 SOL" : "0.5 SOL"}</span></p>
                 <p className="text-white text-[10px] font-mono bg-gray-900 px-3 py-2 rounded-lg mb-4 break-all max-w-[260px]">
                   {walletAddress}
                 </p>
                 <p className="text-gray-500 text-xs">Check your wallet in a few moments!</p>
+                <div className="mt-3 text-center">
+                  <span className={`text-xs font-bold ${
+                    speed >= 3.5 ? "text-yellow-400" : "text-gray-400"
+                  }`}>
+                    {speed >= 3.5 ? "🏆 MASTER MODE COMPLETED" : "✨ STANDARD MODE COMPLETED"}
+                  </span>
+                </div>
               </>
             ) : (
               <>
@@ -489,6 +522,11 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
               <div className="flex items-center gap-0.5 text-pink-400 font-bold">
                 <Zap className="w-3 h-3" />{speed.toFixed(1)}x
               </div>
+              <div className={`text-xs font-bold transition-all duration-100 ${
+                beatPulse ? "text-cyan-400 scale-110" : "text-gray-400"
+              }`}>
+                Level {difficultyLevel}
+              </div>
               <div className="flex items-center gap-0.5">
                 {Array.from({ length: MAX_LIVES }).map((_, i) => (
                   <Heart key={i} className={`w-3.5 h-3.5 ${i < lives ? "text-red-500 fill-red-500" : "text-gray-700"}`} />
@@ -498,7 +536,9 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
 
             {/* Progress */}
             <div className="h-0.5 bg-gray-900 shrink-0">
-              <div className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 transition-all duration-200" style={{ width: `${progress}%` }} />
+              <div className={`h-full bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400 transition-all duration-200 ${
+                beatPulse ? "shadow-lg shadow-cyan-400/50" : ""
+              }`} style={{ width: `${progress}%` }} />
             </div>
 
             {/* Game Board */}
@@ -518,11 +558,17 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
 
               {/* Hit zone */}
               <div
-                className="absolute left-0 right-0 pointer-events-none"
+                className={`absolute left-0 right-0 pointer-events-none transition-all duration-100 ${
+                  beatPulse ? "bg-white/[0.08]" : ""
+                }`}
                 style={{ top: `${HIT_ZONE_TOP}%`, height: `${HIT_ZONE_BOTTOM - HIT_ZONE_TOP}%` }}
               >
-                <div className="absolute inset-0 border-y border-white/10 bg-white/[0.03]" />
-                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-pink-500/40 via-purple-500/40 to-cyan-400/40" />
+                <div className={`absolute inset-0 border-y border-white/10 transition-all duration-100 ${
+                  beatPulse ? "bg-white/[0.08] border-white/20" : "bg-white/[0.03]"
+                }`} />
+                <div className={`absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-pink-500/40 via-purple-500/40 to-cyan-400/40 transition-all duration-100 ${
+                  beatPulse ? "from-pink-500/80 via-purple-500/80 to-cyan-400/80" : ""
+                }`} />
               </div>
 
               {/* Hit FX */}
@@ -552,7 +598,9 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
                     width: `${100 / NUM_LANES}%`,
                   }}
                 >
-                  <div className={`mx-0.5 h-12 rounded-md bg-gradient-to-b ${LANE_COLORS[tile.lane]} shadow-md ${LANE_GLOW[tile.lane]} flex items-center justify-center border border-white/10`}>
+                  <div className={`mx-0.5 h-12 rounded-md bg-gradient-to-b ${LANE_COLORS[tile.lane]} shadow-md ${LANE_GLOW[tile.lane]} flex items-center justify-center border border-white/10 transition-all duration-100 ${
+                    beatPulse ? "scale-105 brightness-125" : ""
+                  }`}>
                     <div className="w-2 h-2 rounded-full bg-white/30" />
                   </div>
                 </div>
@@ -578,4 +626,4 @@ const MacarenaGameComponent = forwardRef<{ openGame: () => void }, {}>(function 
   );
 });
 
-export default MacarenaGameComponent;
+export default MMGAGameComponent;

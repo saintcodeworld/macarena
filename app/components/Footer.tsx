@@ -15,12 +15,12 @@ export default function Footer() {
               </div>
               <div>
                 <h3 className="text-lg font-black">
-                  <span className="text-primary">$</span>MACARENA
+                  <span className="text-primary">$</span>MMGA
                 </h3>
               </div>
             </div>
             <p className="text-sm text-muted leading-relaxed">
-              The Macarena is the soundtrack of the current era. A cultural
+              Make Macarena Great Again is the soundtrack of the current era. A cultural
               phenomenon turned memecoin. This is more than music — it&apos;s a
               movement.
             </p>
@@ -42,7 +42,7 @@ export default function Footer() {
                 href="#"
                 className="block text-sm text-muted hover:text-foreground transition-colors"
               >
-                Buy $MACARENA
+                Buy $MMGA
               </a>
               <a
                 href="#"
@@ -74,17 +74,17 @@ export default function Footer() {
             </div>
             <p className="text-xs text-muted">
               Join our community for the latest updates, new viral drops, and
-              $MACARENA alpha.
+              $MMGA alpha.
             </p>
           </div>
         </div>
 
         <div className="mt-10 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted">
-            © 2026 $MACARENA. All rights reserved. Not financial advice.
+            © 2026 $MMGA. All rights reserved. Not financial advice.
           </p>
           <p className="text-xs text-muted">
-            🎵 Hey Macarena! 💃
+            🎵 Make Macarena Great Again! 💃
           </p>
         </div>
       </div>

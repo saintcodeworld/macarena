@@ -2,15 +2,15 @@
 
 export default function Ticker() {
   const items = [
-    "🔥 $MACARENA TRENDING #1",
+    "🔥 $MMGA TRENDING #1",
     "💰 MARKET CAP MOONING",
-    "🎵 MACARENA x WAR EDITS GOING VIRAL",
+    "🎵 MMGA x WAR EDITS GOING VIRAL",
     "📈 33 VIRAL CLIPS AND COUNTING",
     "🌍 THE SOUND OF THE CURRENT ERA",
     "💎 DIAMOND HANDS ONLY",
     "🚀 TO THE MOON",
-    "⚡ US vs IRAN — MACARENA PLAYS ON",
-    "🎶 HEY MACARENA!",
+    "⚡ US vs IRAN — MMGA PLAYS ON",
+    "🎶 MAKE MACARENA GREAT AGAIN!",
   ];
 
   const tickerContent = [...items, ...items].join("   •   ");
