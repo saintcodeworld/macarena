@@ -1,35 +1,64 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { TrendingUp, Users, Play, Flame } from "lucide-react";
 
-const stats = [
-  {
-    icon: Play,
-    label: "Total Views",
-    value: "14.2M",
-    change: "+342%",
-  },
-  {
-    icon: Users,
-    label: "Community",
-    value: "89.4K",
-    change: "+128%",
-  },
-  {
-    icon: TrendingUp,
-    label: "Trending Rank",
-    value: "#1",
-    change: "Worldwide",
-  },
-  {
-    icon: Flame,
-    label: "Viral Score",
-    value: "98.7",
-    change: "🔥 On Fire",
-  },
-];
-
 export default function StatsBar() {
+  const [totalViews, setTotalViews] = useState(14200000); // 14.2M initial views
+  const [community, setCommunity] = useState(89400); // 89.4K initial community
+
+  // Format number for display
+  const formatNumber = (num: number) => {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+    if (num >= 1000) return (num / 1000).toFixed(1) + "K";
+    return num.toString();
+  };
+
+  // Organic growth simulation
+  useEffect(() => {
+    const growthInterval = setInterval(() => {
+      setTotalViews(prev => {
+        const growthRate = Math.random() * 0.003 + 0.001; // 0.1% to 0.4% growth
+        const additionalViews = Math.floor(prev * growthRate);
+        return prev + additionalViews;
+      });
+      
+      setCommunity(prev => {
+        const growthRate = Math.random() * 0.002 + 0.0005; // 0.05% to 0.25% growth
+        const additionalMembers = Math.floor(prev * growthRate);
+        return prev + additionalMembers;
+      });
+    }, Math.random() * 4000 + 1000); // Random interval between 1-5 seconds
+
+    return () => clearInterval(growthInterval);
+  }, []);
+
+  const stats = [
+    {
+      icon: Play,
+      label: "Total Views",
+      value: formatNumber(totalViews),
+      change: "+" + Math.floor(Math.random() * 200 + 300) + "%",
+    },
+    {
+      icon: Users,
+      label: "Community",
+      value: formatNumber(community),
+      change: "+" + Math.floor(Math.random() * 100 + 100) + "%",
+    },
+    {
+      icon: TrendingUp,
+      label: "Trending Rank",
+      value: "#1",
+      change: "Worldwide",
+    },
+    {
+      icon: Flame,
+      label: "Viral Score",
+      value: (Math.random() * 2 + 97).toFixed(1),
+      change: "🔥 On Fire",
+    },
+  ];
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {stats.map((stat) => (

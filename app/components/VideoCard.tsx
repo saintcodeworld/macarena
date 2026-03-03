@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Play, Pause, Eye, Heart, Share2, Volume2, VolumeX } from "lucide-react";
 
 interface VideoCardProps {
@@ -13,10 +13,24 @@ export default function VideoCard({ src, index }: VideoCardProps) {
   const [isMuted, setIsMuted] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
   const [showControls, setShowControls] = useState(false);
+  const [currentViews, setCurrentViews] = useState(() => Math.floor(Math.random() * 900000 + 100000));
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const fakeViews = Math.floor(Math.random() * 900000 + 100000);
-  const fakeLikes = Math.floor(fakeViews * (Math.random() * 0.3 + 0.1));
+  const baseViews = currentViews;
+  const fakeLikes = Math.floor(baseViews * (Math.random() * 0.3 + 0.1));
+
+  // Organic view growth simulation
+  useEffect(() => {
+    const growthInterval = setInterval(() => {
+      setCurrentViews(prev => {
+        const growthRate = Math.random() * 0.002 + 0.001; // 0.1% to 0.3% growth per interval
+        const additionalViews = Math.floor(prev * growthRate);
+        return prev + additionalViews;
+      });
+    }, Math.random() * 3000 + 2000); // Random interval between 2-5 seconds
+
+    return () => clearInterval(growthInterval);
+  }, []);
 
   const formatNumber = (num: number) => {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
@@ -56,8 +70,6 @@ export default function VideoCard({ src, index }: VideoCardProps) {
   return (
     <div
       className="video-card group relative rounded-2xl overflow-hidden bg-card border border-border cursor-pointer"
-      onMouseEnter={() => setShowControls(true)}
-      onMouseLeave={() => setShowControls(false)}
       onClick={togglePlay}
     >
       {/* Trending Badge */}
@@ -91,7 +103,7 @@ export default function VideoCard({ src, index }: VideoCardProps) {
         {/* Controls Overlay */}
         <div
           className={`absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-300 ${
-            showControls || !isPlaying ? "opacity-100" : "opacity-0"
+            "opacity-100"
           }`}
         >
           <div className="flex items-center justify-between">
@@ -131,7 +143,7 @@ export default function VideoCard({ src, index }: VideoCardProps) {
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1 text-xs text-muted">
               <Eye className="w-3.5 h-3.5" />
-              {formatNumber(fakeViews)}
+              {formatNumber(baseViews)}
             </span>
             <button
               onClick={(e) => {
